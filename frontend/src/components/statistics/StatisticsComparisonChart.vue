@@ -89,7 +89,8 @@ const comparisonChartData = computed(() => {
       <h3 class="text-xl font-semibold text-gray-700 mb-4">
         Comparaison SARS vs COVID-19 - {{ selectedRegion?.name }}
       </h3>
-      <Chart type="bar" :data="comparisonChartData" class="w-full h-[400px]" />
+      <Chart type="bar" :data="comparisonChartData" class="w-full h-[400px]" 
+      aria-label="Graphique de comparaison des cas et décès entre les pandémies"/>
     </div>
   </div>
 </template>

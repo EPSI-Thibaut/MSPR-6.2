@@ -23,7 +23,9 @@ onMounted(async () => {
     <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">À propos</h2>
 
     <!-- Section projet -->
-    <div class="bg-white shadow-lg rounded-xl p-6 mb-8 border border-gray-200">
+    <div class="bg-white shadow-lg rounded-xl p-6 mb-8 border border-gray-200"
+    role="region"
+    aria-label="Présentation du projet">
       <h3 class="text-xl font-semibold text-gray-700 mb-4">Notre projet</h3>
       <p class="text-gray-600">
         Cette application a été développée dans le cadre du projet MSPR1 pour visualiser et analyser
@@ -32,7 +34,10 @@ onMounted(async () => {
     </div>
 
     <!-- Section ETL avec Tailwind uniquement -->
-    <div class="bg-white shadow-lg rounded-xl p-6 mb-8 border border-gray-200">
+    <div 
+    class="bg-white shadow-lg rounded-xl p-6 mb-8 border border-gray-200"
+    role="region"
+    aria-label="Description du processus ETL">
       <h3 class="text-xl font-semibold text-gray-700 mb-4">Notre processus ETL</h3>
 
       <!-- Extraction -->
@@ -97,7 +102,10 @@ onMounted(async () => {
     </div>
 
     <!-- Équipe -->
-    <div class="bg-white shadow-lg rounded-xl p-6 mb-8 border border-gray-200">
+    <div 
+    class="bg-white shadow-lg rounded-xl p-6 mb-8 border border-gray-200"
+    role="region"
+    aria-label="Présentation de l'équipe">
       <h3 class="text-xl font-semibold text-gray-700 mb-4">Notre équipe</h3>
       <p class="text-gray-600">
         Ce projet a été développé par une équipe d'étudiants dans le cadre du MSPR1 de l'EPSI.

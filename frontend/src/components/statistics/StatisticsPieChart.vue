@@ -67,11 +67,12 @@ const pieOptions = {
     <ChartSkeleton v-if="loading" type="pie" />
 
     <!-- Graphique réel quand chargé -->
-    <div v-else class="bg-white shadow-lg rounded-xl p-6 mb-8 border border-gray-200">
+    <div v-else class="bg-white shadow-lg rounded-xl p-6 mb-8 border border-gray-200" role="region"
+    :aria-label="`Répartition des décès par pays pour ${selectedPandemic?.name}`">
       <h3 class="text-xl font-semibold text-gray-700 mb-4">
         Répartition des morts par pays - {{ selectedPandemic?.name }}
       </h3>
-      <Chart type="pie" :data="pieData" :options="pieOptions" class="w-full h-[300px]" />
+      <Chart type="pie" :data="pieData" :options="pieOptions" class="w-full h-[300px]" aria-hidden="true" />
     </div>
   </div>
 </template>

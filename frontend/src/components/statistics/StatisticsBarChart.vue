@@ -56,7 +56,8 @@ const barData = computed(() => ({
       <h3 class="text-xl font-semibold text-gray-700 mb-4">
         Nombre de morts, cas ou guéris - {{ selectedPandemic?.name }}
       </h3>
-      <Chart type="bar" :data="barData" class="w-full h-[400px]" />
+      <Chart type="bar" :data="barData" class="w-full h-[400px]" 
+      aria-label="Graphique des morts, cas et guéris par région pour la pandémie sélectionnée" />
     </div>
   </div>
 </template>
