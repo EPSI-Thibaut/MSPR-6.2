@@ -35,7 +35,8 @@ const menuItems = ref([
 </script>
 
 <template>
-  <header class="mb-2 text-gray-800 shadow-md rounded-lg">
+  <header class="mb-2 text-gray-800 shadow-md rounded-lg" role="navigation"
+  aria-label="Menu principal de navigation">
     <Menubar :model="menuItems" class="rounded-lg" />
   </header>
 </template>

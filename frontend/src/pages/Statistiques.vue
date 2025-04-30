@@ -61,16 +61,20 @@ onMounted(async () => {
 
 <template>
   <div class="p-6">
-    <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Statistiques des maladies</h2>
+    <header class="text-center mb-6" role="region" aria-label="Titre de la page Statistiques">
+      <h2 class="text-3xl font-bold text-gray-800">Statistiques des maladies</h2>
+    </header>
 
     <!-- Filtres (sélecteurs de pandémie et région) -->
-    <StatisticsFilters
-      :pandemies="pandemies"
-      :regions="regions"
-      v-model:selectedPandemic="selectedPandemic"
-      v-model:selectedRegion="selectedRegion"
-      :loading="loading"
-    />
+    <section role="region" aria-label="Filtres de sélection de pandémie et de région">
+      <StatisticsFilters
+        :pandemies="pandemies"
+        :regions="regions"
+        v-model:selectedPandemic="selectedPandemic"
+        v-model:selectedRegion="selectedRegion"
+        :loading="loading"
+      />
+     </section>
 
     <!-- Chargement initial des données -->
     <LoadingIndicator v-if="loading" message="Chargement des données..." />
@@ -78,13 +82,15 @@ onMounted(async () => {
     <!-- Message d'erreur global -->
     <div
       v-else-if="error"
+      role="alert"
       class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6"
     >
       <p>{{ error }}</p>
     </div>
 
     <!-- Message quand aucune sélection -->
-    <div v-else-if="!selectedPandemic || !selectedRegion" class="text-center py-12">
+    <div v-else-if="!selectedPandemic || !selectedRegion" class="text-center py-12" role="region"
+    aria-label="Message de données indisponibles">
       <p class="text-gray-600 text-lg">Veuillez sélectionner une pandémie et une région.</p>
     </div>
 
@@ -98,10 +104,12 @@ onMounted(async () => {
       v-else-if="loadingPandemicData && loadingTimelineData && loadingComparisonData"
       :fullScreen="true"
       message="Chargement des données..."
+      role="status"
+      aria-live="polite"
     />
 
     <!-- Contenu principal avec les graphiques -->
-    <div v-else>
+    <div v-else role="region" aria-label="Visualisation des statistiques">
       <!-- Graphique en camembert -->
       <StatisticsPieChart
         :allCountriesData="allCountriesData"

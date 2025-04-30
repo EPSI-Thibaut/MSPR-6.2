@@ -46,6 +46,7 @@ const updateRegion = (value: unknown) => {
       placeholder="Sélectionnez une pandémie"
       class="w-full md:w-1/3"
       :disabled="loading"
+      aria-label="Sélection de la pandémie"
     />
 
     <Dropdown
@@ -59,6 +60,7 @@ const updateRegion = (value: unknown) => {
       filter
       :showClear="true"
       :virtualScrollerOptions="{ itemSize: 38 }"
+      aria-label="Sélection de la région"
     />
   </div>
 </template>

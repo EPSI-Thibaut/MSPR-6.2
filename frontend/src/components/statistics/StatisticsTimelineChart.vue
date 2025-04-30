@@ -63,11 +63,13 @@ const timelineChartData = computed(() => ({
     <div
       v-else-if="timelineData.length > 0"
       class="bg-white shadow-lg rounded-xl p-6 mb-8 border border-gray-200"
+      role="region"
+      :aria-label="`Graphique de l'évolution dans le temps pour ${selectedRegion?.name} pendant ${selectedPandemic?.name}`"
     >
       <h3 class="text-xl font-semibold text-gray-700 mb-4">
         Évolution dans le temps - {{ selectedRegion?.name }} ({{ selectedPandemic?.name }})
       </h3>
-      <Chart type="line" :data="timelineChartData" class="w-full h-[400px]" />
+      <Chart type="line" :data="timelineChartData" class="w-full h-[400px]" aria-hidden="true" />
     </div>
   </div>
 </template>

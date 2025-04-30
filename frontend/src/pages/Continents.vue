@@ -13,6 +13,8 @@ import ContinentsComparison from '../components/comparaison/ContinentsComparison
     </div>
 
     <!-- Composant de comparaison des continents -->
-    <ContinentsComparison />
+    <section role="region" aria-label="Comparaison des pandémies par continent">
+      <ContinentsComparison />
+    </section>
   </div>
 </template>

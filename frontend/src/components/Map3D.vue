@@ -258,6 +258,8 @@ watch(countriesData, (newValue) => {
       id="map3d"
       class="w-full h-[500px] rounded-lg overflow-hidden"
       style="min-height: 500px"
+      role="img"
+      aria-label="Carte interactive affichant les cas de COVID-19 par pays en 3D"
     ></div>
     <div class="mt-4 text-sm text-gray-500 bg-gray-50 p-4 rounded-lg border border-gray-200">
       <h4 class="font-semibold mb-2">À propos de cette carte</h4>
