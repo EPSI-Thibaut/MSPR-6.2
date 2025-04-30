@@ -24,11 +24,3 @@ Cette application FLASK PYthon est conçue pour créer un modèle de prédiction
    ```bash
    python run.py
    ```
-
-### Exemple de commande pour prédictions
-Si votre modèle de prédiction est déjà intégré dans l'application Flask, vous pouvez tester une prédiction en utilisant `curl` ou un outil comme Postman. Exemple avec `curl` :
-```bash
-curl -X POST http://127.0.0.1:5000/predict -H "Content-Type: application/json" -d '{"input_data": [1.0, 2.0, 3.0]}'
-```
-
-Assurez-vous que votre route `/predict` est bien définie dans routes.py.
