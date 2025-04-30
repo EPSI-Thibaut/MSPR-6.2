@@ -18,6 +18,7 @@ pycache/
 
 #Ignorer les fichiers de configuration de l'IDE
 .vscode/
+/.history/
 .idea/
 *.suo
 .ntvs
