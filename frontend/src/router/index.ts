@@ -3,6 +3,7 @@ import Home from '../pages/Home.vue'
 import Statistiques from '../pages/Statistiques.vue'
 import Comparaison from '../pages/Comparaison.vue'
 import Continents from '../pages/Continents.vue'
+import Predictions from '@/pages/Predictions.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -26,6 +27,11 @@ const router = createRouter({
       path: '/continents',
       name: 'continents',
       component: Continents,
+    },
+    {
+      path: '/predictions',
+      name: 'predictions',
+      component: Predictions,
     },
     {
       path: '/about',

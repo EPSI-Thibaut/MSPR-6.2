@@ -34,6 +34,11 @@ const menuItems = ref([
     command: () => router.push('/continents'),
   },
   {
+    label: 'Prédictions COVID',
+    icon: 'pi pi-chart-bar',
+    command: () => router.push('/predictions'),
+  },
+  {
     label: 'À propos',
     icon: 'pi pi-info-circle',
     command: () => router.push('/about'),

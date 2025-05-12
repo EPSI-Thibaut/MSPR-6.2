@@ -4,8 +4,8 @@ Cette application FLASK PYthon est conçue pour créer un modèle de prédiction
 
 1. **Créer un environnement virtuel** :
    ```bash
-   python3 -m venv venv
-   source venv/bin/activate  # Sur Windows : venv\Scripts\activate
+   python3 -m venv env
+   source env/bin/activate  # Sur Windows : venv\Scripts\activate
    ```
 
 2. **Installer les dépendances** :
