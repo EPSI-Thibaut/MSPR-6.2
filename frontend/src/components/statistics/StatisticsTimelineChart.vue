@@ -62,7 +62,7 @@ const timelineChartData = computed(() => ({
     <!-- Graphique réel quand chargé -->
     <div
       v-else-if="timelineData.length > 0"
-      class="bg-white shadow-lg rounded-xl p-6 mb-8 border border-gray-200"
+      class="shadow-lg rounded-xl p-6 mb-8 border border-gray-200"
       role="region"
       :aria-label="`Graphique de l'évolution dans le temps pour ${selectedRegion?.name} pendant ${selectedPandemic?.name}`"
     >

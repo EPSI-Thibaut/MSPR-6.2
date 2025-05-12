@@ -1,9 +1,16 @@
 <script setup lang="ts">
 import Menubar from 'primevue/menubar'
-import { ref } from 'vue'
+import Button from 'primevue/button'
+import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { useTheme } from '../composables/useTheme'
 
 const router = useRouter()
+const { isDarkTheme, toggleTheme } = useTheme()
+
+// Calculer l'icône en fonction du thème actuel
+const themeIcon = computed(() => isDarkTheme.value ? 'pi pi-sun' : 'pi pi-moon')
+const themeLabel = computed(() => isDarkTheme.value ? 'Mode clair' : 'Mode sombre')
 
 const menuItems = ref([
   {
@@ -35,8 +42,26 @@ const menuItems = ref([
 </script>
 
 <template>
-  <header class="mb-2 text-gray-800 shadow-md rounded-lg" role="navigation"
+  <header class="mb-2 shadow-md rounded-lg" role="navigation"
   aria-label="Menu principal de navigation">
-    <Menubar :model="menuItems" class="rounded-lg" />
+    <Menubar :model="menuItems" class="rounded-lg">
+      <template #end>
+        <Button
+          :icon="themeIcon"
+          @click="toggleTheme"
+          rounded
+          text
+          :aria-label="themeLabel"
+          v-tooltip.bottom="themeLabel"
+          class="theme-toggle"
+        />
+      </template>
+    </Menubar>
   </header>
 </template>
+
+<style scoped>
+.theme-toggle {
+  margin-right: 0.5rem;
+}
+</style>

@@ -20,30 +20,30 @@ onMounted(async () => {
 
 <template>
   <div class="p-6">
-    <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">À propos</h2>
+    <h2 class="text-3xl font-bold mb-6 text-center">À propos</h2>
 
     <!-- Section projet -->
-    <div class="bg-white shadow-lg rounded-xl p-6 mb-8 border border-gray-200"
+    <div class="shadow-lg rounded-xl p-6 mb-8 border border-gray-200"
     role="region"
     aria-label="Présentation du projet">
-      <h3 class="text-xl font-semibold text-gray-700 mb-4">Notre projet</h3>
-      <p class="text-gray-600">
+      <h3 class="text-xl font-semibold  mb-4">Notre projet</h3>
+      <p class="">
         Cette application a été développée dans le cadre du projet MSPR1 pour visualiser et analyser
         les données relatives au COVID-19 et au SARS à travers le monde.
       </p>
     </div>
 
     <!-- Section ETL avec Tailwind uniquement -->
-    <div 
-    class="bg-white shadow-lg rounded-xl p-6 mb-8 border border-gray-200"
+    <div
+    class="shadow-lg rounded-xl p-6 mb-8 border border-gray-200"
     role="region"
     aria-label="Description du processus ETL">
-      <h3 class="text-xl font-semibold text-gray-700 mb-4">Notre processus ETL</h3>
+      <h3 class="text-xl font-semibold  mb-4">Notre processus ETL</h3>
 
       <!-- Extraction -->
       <div class="mb-6">
-        <p class="text-gray-600">
-          <span class="font-bold text-gray-700">Extraction des données</span> : Notre ETL commence
+        <p class="">
+          <span class="font-bold ">Extraction des données</span> : Notre ETL commence
           par l'extraction de données provenant de sources multiples et fiables. Nous nous appuyons
           principalement sur des API gouvernementales et des bases de données sanitaires
           internationales comme l'OMS pour recueillir des informations précises sur les cas de
@@ -60,8 +60,8 @@ onMounted(async () => {
 
       <!-- Transformation -->
       <div class="mb-6">
-        <p class="text-gray-600">
-          <span class="font-bold text-gray-700">Traitement et transformation</span> : Une fois
+        <p class="">
+          <span class="font-bold ">Traitement et transformation</span> : Une fois
           extraites, les données brutes subissent un processus de transformation. Ce processus
           comprend le nettoyage des données incomplètes ou incorrectes, la normalisation des formats
           pour assurer la cohérence entre différentes sources, et la consolidation des informations
@@ -75,8 +75,8 @@ onMounted(async () => {
 
       <!-- Chargement -->
       <div class="mb-6">
-        <p class="text-gray-600">
-          <span class="font-bold text-gray-700">Chargement et stockage</span> : Les données
+        <p class="">
+          <span class="font-bold ">Chargement et stockage</span> : Les données
           transformées sont ensuite chargées dans notre base de données relationnelle MariaDB. Une
           API RESTful expose ces données de manière sécurisée à notre interface utilisateur, avec
           des mécanismes de mise en cache pour améliorer les performances.
@@ -88,8 +88,8 @@ onMounted(async () => {
 
       <!-- Visualisation -->
       <div>
-        <p class="text-gray-600">
-          <span class="font-bold text-gray-700">Visualisation et analyse</span> : Notre interface
+        <p class="">
+          <span class="font-bold ">Visualisation et analyse</span> : Notre interface
           utilisateur exploite les données traitées pour offrir des visualisations interactives et
           informatives. Les utilisateurs peuvent explorer les données à travers différentes
           dimensions géographiques (monde, continents, pays) et temporelles (évolution journalière,
@@ -102,12 +102,12 @@ onMounted(async () => {
     </div>
 
     <!-- Équipe -->
-    <div 
-    class="bg-white shadow-lg rounded-xl p-6 mb-8 border border-gray-200"
+    <div
+    class="shadow-lg rounded-xl p-6 mb-8 border border-gray-200"
     role="region"
     aria-label="Présentation de l'équipe">
-      <h3 class="text-xl font-semibold text-gray-700 mb-4">Notre équipe</h3>
-      <p class="text-gray-600">
+      <h3 class="text-xl font-semibold  mb-4">Notre équipe</h3>
+      <p class="">
         Ce projet a été développé par une équipe d'étudiants dans le cadre du MSPR1 de l'EPSI.
       </p>
     </div>

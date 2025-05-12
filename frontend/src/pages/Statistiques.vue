@@ -62,7 +62,7 @@ onMounted(async () => {
 <template>
   <div class="p-6">
     <header class="text-center mb-6" role="region" aria-label="Titre de la page Statistiques">
-      <h2 class="text-3xl font-bold text-gray-800">Statistiques des maladies</h2>
+      <h2 class="text-3xl font-bold">Statistiques des maladies</h2>
     </header>
 
     <!-- Filtres (sélecteurs de pandémie et région) -->
@@ -83,7 +83,7 @@ onMounted(async () => {
     <div
       v-else-if="error"
       role="alert"
-      class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6"
+      class="px-4 py-3 mb-6"
     >
       <p>{{ error }}</p>
     </div>

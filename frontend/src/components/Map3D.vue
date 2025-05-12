@@ -244,8 +244,8 @@ watch(countriesData, (newValue) => {
 </script>
 
 <template>
-  <div class="bg-gray-100 shadow-md rounded-xl p-6 border border-gray-300">
-    <div v-if="error" class="bg-red-100 text-red-600 p-4 mb-4 rounded">
+  <div class=" shadow-md rounded-xl p-6 border border-gray-300">
+    <div v-if="error" class="p-4 mb-4 rounded">
       {{ error }}
     </div>
     <div v-if="loading" class="flex justify-center items-center mb-4">
@@ -261,7 +261,7 @@ watch(countriesData, (newValue) => {
       role="img"
       aria-label="Carte interactive affichant les cas de COVID-19 par pays en 3D"
     ></div>
-    <div class="mt-4 text-sm text-gray-500 bg-gray-50 p-4 rounded-lg border border-gray-200">
+    <div class="mt-4 text-sm p-4 rounded-lg border border-gray-200">
       <h4 class="font-semibold mb-2">À propos de cette carte</h4>
       <p>
         Cette carte 3D interactive affiche le nombre de cas COVID-19 par pays. Les pays sont
