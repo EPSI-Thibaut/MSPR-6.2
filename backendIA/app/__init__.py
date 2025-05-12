@@ -3,6 +3,7 @@ from app.config import Config
 from app.models import db
 from app.routes import main
 from flask_migrate import Migrate
+from app.ia_model import CovidForecaster
 
 def create_app():
     app = Flask(__name__)

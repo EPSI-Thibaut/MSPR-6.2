@@ -20,6 +20,8 @@ def test_db_connection():
 def get_data_pandemics(pandemics):
     try:
         data = get_all_data_from_pandemics(pandemics)
+        if not data:
+            return jsonify({"message": f"Aucune donnée trouvée pour la pandémie '{pandemics}'"}), 404
         return jsonify({"data": data}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -53,5 +55,19 @@ def get_data_total_by_day(total_by_day):
     try:
         data = get_all_data_from_total_by_day(total_by_day)
         return jsonify({"data": data}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@main.route('/predict_2023/<region_name>', methods=['GET'])
+def predict_2023_region(region_name):
+    """Prédire les cas COVID pour 2023 pour une région spécifique"""
+    try:
+        forecaster = CovidForecaster()
+        predictions = forecaster.predict_2023(region_name)
+        
+        return jsonify({
+            "region": region_name,
+            "predictions_2023": predictions.to_dict(orient='records')
+        })
     except Exception as e:
         return jsonify({"error": str(e)}), 500
