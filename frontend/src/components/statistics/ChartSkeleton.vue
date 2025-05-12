@@ -12,7 +12,7 @@ defineProps({
 </script>
 
 <template>
-  <div class="bg-white shadow-lg rounded-xl p-6 mb-8 border border-gray-200">
+  <div class="shadow-lg rounded-xl p-6 mb-8 border border-gray-200">
     <Skeleton height="24px" width="350px" class="mb-6"aria-label="Chargement du titre du graphique" role="status" />
 
     <div v-if="type === 'pie'" class="flex justify-center">

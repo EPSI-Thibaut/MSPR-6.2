@@ -84,12 +84,12 @@ const comparisonChartData = computed(() => {
     <!-- Graphique réel quand chargé -->
     <div
       v-else-if="comparisonData"
-      class="bg-white shadow-lg rounded-xl p-6 mb-8 border border-gray-200"
+      class="shadow-lg rounded-xl p-6 mb-8 border border-gray-200"
     >
       <h3 class="text-xl font-semibold text-gray-700 mb-4">
         Comparaison SARS vs COVID-19 - {{ selectedRegion?.name }}
       </h3>
-      <Chart type="bar" :data="comparisonChartData" class="w-full h-[400px]" 
+      <Chart type="bar" :data="comparisonChartData" class="w-full h-[400px]"
       aria-label="Graphique de comparaison des cas et décès entre les pandémies"/>
     </div>
   </div>

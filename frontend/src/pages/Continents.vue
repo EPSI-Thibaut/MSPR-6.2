@@ -6,8 +6,8 @@ import ContinentsComparison from '../components/comparaison/ContinentsComparison
   <div class="p-4">
     <!-- Titre de la page -->
     <div class="mb-6">
-      <h1 class="text-3xl font-bold text-gray-800 mb-2">Analyse par continents</h1>
-      <p class="text-gray-600">
+      <h1 class="text-3xl font-bold mb-2">Analyse par continents</h1>
+      <p>
         Comparaison détaillée de l'impact des pandémies SARS et COVID-19 par continent
       </p>
     </div>

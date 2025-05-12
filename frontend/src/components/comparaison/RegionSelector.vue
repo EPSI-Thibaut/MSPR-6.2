@@ -25,7 +25,7 @@ const updateRegion = (newValue) => {
 
 <template>
   <div class="flex flex-col items-center">
-    <label for="region-select" class="block text-base font-medium text-gray-700 mb-3 text-center">
+    <label for="region-select" class="block text-base font-medium mb-3 text-center">
       Sélectionnez un pays pour la comparaison
     </label>
     <Dropdown

@@ -61,7 +61,7 @@ const {
           <MortalityChart :chartData="mortalityData" :chartOptions="doughnutOptions" />
         </div>
         <div v-else-if="!loading && !error" class="text-center py-8">
-          <p class="text-gray-600">Aucune donnée de comparaison disponible pour ce pays.</p>
+          <p class="">Aucune donnée de comparaison disponible pour ce pays.</p>
         </div>
       </div>
 

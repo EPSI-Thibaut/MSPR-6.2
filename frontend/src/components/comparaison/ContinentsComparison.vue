@@ -260,10 +260,10 @@ onMounted(fetchContinentsData)
       </div>
 
       <!-- Message d'erreur -->
-      <div v-else-if="error" class="p-4 border-round bg-red-50 border-left-3 border-red-500">
+      <div v-else-if="error" class="p-4 border-round border-left-3">
         <div class="flex align-items-center">
-          <i class="pi pi-exclamation-triangle mr-3 text-red-500" style="font-size: 1.5rem"></i>
-          <span class="text-red-700">{{ error }}</span>
+          <i class="pi pi-exclamation-triangle mr-3" style="font-size: 1.5rem"></i>
+          <span>{{ error }}</span>
         </div>
       </div>
 
