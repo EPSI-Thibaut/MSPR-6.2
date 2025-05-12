@@ -82,12 +82,13 @@ const chartOptions = computed(() => ({
 </script>
 
 <template>
-  <div class="mb-8">
+  <div  class="mb-8 max-w-6xl mx-auto px-4">
     <!-- Skeleton pendant le chargement -->
     <ChartSkeleton v-if="loading" type="bar" />
 
     <!-- Graphique réel quand chargé -->
-    <div v-else class="shadow-lg rounded-xl p-6 mb-8 border"
+    <div v-else class="shadow-lg rounded-xl px-4 py-6 sm:px-6 mb-8 border overflow-x-auto"
+
       :style="{
         backgroundColor: 'var(--card-background)',
         borderColor: 'var(--card-border)',
@@ -96,8 +97,8 @@ const chartOptions = computed(() => ({
       <h3 class="text-xl font-semibold mb-4" :style="{ color: 'var(--color-text)' }">
         Nombre de morts, cas ou guéris - {{ selectedPandemic?.name }}
       </h3>
-      <Chart type="bar" :data="barData" :options="chartOptions" class="w-full h-[400px]"
-        aria-label="Graphique des morts, cas et guéris par région pour la pandémie sélectionnée" />
+      <Chart type="bar" :data="barData" :options="chartOptions" class="w-full h-[300px] sm:h-[400px] md:h-[500px]"
+      role="img" aria-label="Graphique des morts, cas et guéris par région pour la pandémie sélectionnée" />
     </div>
   </div>
 </template>

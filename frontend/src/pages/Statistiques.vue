@@ -60,7 +60,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="p-6">
+  <div class="px-4 sm:px-6 lg:px-8 py-6 max-w-6xl mx-auto">
     <header class="text-center mb-6" role="region" aria-label="Titre de la page Statistiques">
       <h2 class="text-3xl font-bold">Statistiques des maladies</h2>
     </header>
@@ -74,7 +74,7 @@ onMounted(async () => {
         v-model:selectedRegion="selectedRegion"
         :loading="loading"
       />
-     </section>
+    </section>
 
     <!-- Chargement initial des données -->
     <LoadingIndicator v-if="loading" message="Chargement des données..." />
@@ -83,19 +83,27 @@ onMounted(async () => {
     <div
       v-else-if="error"
       role="alert"
-      class="px-4 py-3 mb-6"
+      class="px-4 py-6 mb-6 text-center max-w-xl mx-auto"
     >
-      <p>{{ error }}</p>
+      <p class="text-red-600 text-lg">{{ error }}</p>
     </div>
 
     <!-- Message quand aucune sélection -->
-    <div v-else-if="!selectedPandemic || !selectedRegion" class="text-center py-12" role="region"
-    aria-label="Message de données indisponibles">
+    <div
+      v-else-if="!selectedPandemic || !selectedRegion"
+      class="text-center py-12 px-4 max-w-xl mx-auto"
+      role="region"
+      aria-label="Message de données indisponibles"
+    >
       <p class="text-gray-600 text-lg">Veuillez sélectionner une pandémie et une région.</p>
     </div>
 
     <!-- Message quand aucune donnée n'est disponible -->
-    <div v-else-if="countriesData.length === 0 && !loadingPandemicData" class="text-center py-12">
+    <div
+      v-else-if="countriesData.length === 0 && !loadingPandemicData"
+      class="text-center py-12 px-4 max-w-xl mx-auto"
+      role="alert"
+    >
       <p class="text-gray-600 text-lg">Aucune donnée disponible pour cette pandémie.</p>
     </div>
 
