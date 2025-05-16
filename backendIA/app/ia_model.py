@@ -178,25 +178,30 @@ class CovidForecaster:
         return X_train_scaled, X_test_scaled, y_train_scaled, y_test, df['date'][train_size:]
 
     def train(self, X_train, y_train):
-        """Entraîne un modèle d'ensemble pour améliorer les prédictions"""
-        print("Début de l'entraînement du modèle...")
-    
-        # Utiliser un modèle RandomForest avec hyperparamètres optimisés
+        """Entraîne un modèle d'ensemble pour améliorer les prédictions (version rapide)"""
+        print("Début de l'entraînement du modèle (rapide)...")
+
         rf_model = RandomForestRegressor(random_state=42, n_jobs=-1)
 
-        # Définir les paramètres pour la recherche
+        # Réduire l'espace de recherche
         param_dist = {
-            'n_estimators': randint(100, 300),
-            'max_depth': randint(10, 20),
-            'min_samples_split': randint(2, 20),
-            'min_samples_leaf': randint(1, 10)
+            'n_estimators': randint(20, 60),        # Moins d'arbres
+            'max_depth': randint(3, 8),             # Arbres moins profonds
+            'min_samples_split': randint(5, 20),    # Plus de samples pour split
+            'min_samples_leaf': randint(3, 10)      # Plus de samples par feuille
         }
 
-        # Utiliser RandomizedSearchCV pour optimiser les hyperparamètres
-        random_search = RandomizedSearchCV(estimator=rf_model, param_distributions=param_dist, n_iter=20, cv=3, n_jobs=-1, verbose=2)
+        # Moins d'itérations et moins de folds
+        random_search = RandomizedSearchCV(
+            estimator=rf_model,
+            param_distributions=param_dist,
+            n_iter=5,           # Seulement 5 combinaisons testées
+            cv=2,               # Seulement 2 folds
+            n_jobs=-1,
+            verbose=1
+        )
         random_search.fit(X_train, y_train)
 
-        # Utiliser le meilleur modèle trouvé
         self.model = random_search.best_estimator_
 
         print("Entraînement terminé.")
@@ -231,7 +236,7 @@ class CovidForecaster:
         return y_pred
 
     def predict_future(self, df, days=30):
-        """Prédit les cas futurs pour les prochains jours"""
+        """Prédit les cas, décès et guérisons futurs pour les prochains jours"""
         if self.model is None:
             raise ValueError("Le modèle n'a pas encore été entraîné")
 
@@ -248,8 +253,8 @@ class CovidForecaster:
         future_df['quarter'] = future_df['date'].dt.quarter
         future_df['is_weekend'] = future_df['day_of_week'].apply(lambda x: 1 if x >= 5 else 0)
         future_df['season'] = future_df['month'].apply(lambda x: 1 if x in [12, 1, 2] else
-                                              2 if x in [3, 4, 5] else
-                                              3 if x in [6, 7, 8] else 4)
+                                                    2 if x in [3, 4, 5] else
+                                                    3 if x in [6, 7, 8] else 4)
 
         # Initialiser avec les dernières valeurs connues
         last_known_cases = df['cases'].tail(30).values
@@ -261,13 +266,23 @@ class CovidForecaster:
         last_death_rate = df['death_rate'].tail(7).mean()
         last_recovery_rate = df['recovery_rate'].tail(7).mean()
 
+                # Correction : si NaN ou 0, utilise une valeur par défaut raisonnable
+        if not np.isfinite(last_death_rate) or last_death_rate == 0:
+            last_death_rate = 0.0145  # ou une valeur moyenne issue de ton historique
+
+        if not np.isfinite(last_recovery_rate) or last_recovery_rate == 0:
+            last_recovery_rate = 0.10  # ou une valeur moyenne issue de ton historique
         # Initialiser les moyennes mobiles
         last_cases_ma7 = df['cases_ma7'].iloc[-1] if 'cases_ma7' in df.columns else df['cases'].tail(7).mean()
         last_cases_ma14 = df['cases_ma14'].iloc[-1] if 'cases_ma14' in df.columns else df['cases'].tail(14).mean()
         last_cases_ma30 = df['cases_ma30'].iloc[-1] if 'cases_ma30' in df.columns else df['cases'].tail(30).mean()
 
-        # Faire des prédictions progressives jour par jour
+        # Listes pour stocker les prédictions
         predictions = []
+        deaths_predictions = []
+        recovered_predictions = []
+
+        # Faire des prédictions progressives jour par jour
         for i in range(days):
             features = {}
 
@@ -335,14 +350,18 @@ class CovidForecaster:
             # S'assurer que la prédiction est positive
             pred = max(0, pred)
 
+            # Prédire deaths et recovered à partir des taux moyens
+            pred_deaths = pred * last_death_rate if last_death_rate > 0 else 0
+            pred_recovered = pred * last_recovery_rate if last_recovery_rate > 0 else 0
+
             predictions.append(pred)
+            deaths_predictions.append(pred_deaths)
+            recovered_predictions.append(pred_recovered)
 
             # Mettre à jour les dernières valeurs connues
             last_known_cases = np.append(last_known_cases[1:], pred)
-            new_deaths = pred * last_death_rate
-            new_recovered = pred * last_recovery_rate
-            last_known_deaths = np.append(last_known_deaths[1:], new_deaths)
-            last_known_recovered = np.append(last_known_recovered[1:], new_recovered)
+            last_known_deaths = np.append(last_known_deaths[1:], pred_deaths)
+            last_known_recovered = np.append(last_known_recovered[1:], pred_recovered)
 
             # Mettre à jour les moyennes mobiles
             last_cases_ma7 = (last_cases_ma7 * 6 + pred) / 7
@@ -352,7 +371,9 @@ class CovidForecaster:
         # Créer un DataFrame pour les résultats
         results_df = pd.DataFrame({
             'date': future_dates,
-            'predicted_cases': predictions
+            'predicted_cases': predictions,
+            'predicted_deaths': deaths_predictions,
+            'predicted_recovered': recovered_predictions
         })
 
         return results_df
