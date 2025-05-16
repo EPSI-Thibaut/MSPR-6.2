@@ -44,7 +44,7 @@ const {
 
     <!-- Région concernée -->
     <AnalysedRegion v-if="comparisonData" :region="comparisonData.region" />
-    <div class="flex justify-center">
+    <div class="flex">
       <!-- Cartes des statistiques - Version centrée -->
       <div class="flex justify-center mb-6">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl">
@@ -64,7 +64,6 @@ const {
           <p class="">Aucune donnée de comparaison disponible pour ce pays.</p>
         </div>
       </div>
-
       <!-- Message si pas de données -->
     </div>
   </div>
