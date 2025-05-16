@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify
 from app.models import db
 from sqlalchemy.sql import text
 from app.services import get_all_data_from_pandemics, get_all_data_from_continents
+from app.ia_model import CovidForecaster
 
 main = Blueprint('main', __name__)
 
@@ -71,3 +72,23 @@ def predict_2023_region(region_name):
         })
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+@main.route('/train_predict', methods=['POST'])
+def train_and_predict():
+    """
+    Lance le workflow d'entraînement et de prédiction IA.
+    """
+    try:
+        region_name = request.json.get('region_name') if request.is_json else None
+        forecaster = CovidForecaster()
+        predictions = forecaster.predict_2023(region_name)
+        if predictions is not None:
+            return jsonify({
+                "status": "success",
+                "message": "Modèle entraîné et prédictions générées.",
+                "nb_predictions": len(predictions),
+            }), 200
+        else:
+            return jsonify({"status": "error", "message": "Aucune prédiction générée."}), 500
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500

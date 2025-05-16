@@ -183,23 +183,41 @@ class CovidForecaster:
 
         rf_model = RandomForestRegressor(random_state=42, n_jobs=-1)
 
-        # Réduire l'espace de recherche
-        param_dist = {
-            'n_estimators': randint(20, 60),        # Moins d'arbres
-            'max_depth': randint(3, 8),             # Arbres moins profonds
-            'min_samples_split': randint(5, 20),    # Plus de samples pour split
-            'min_samples_leaf': randint(3, 10)      # Plus de samples par feuille
-        }
+        # Données d'entraînement rapide pour Random Forest et le développement du modèle IA
+        #param_dist = {
+        #    'n_estimators': randint(20, 60),        # Moins d'arbres
+        #    'max_depth': randint(3, 8),             # Arbres moins profonds
+        #    'min_samples_split': randint(5, 20),    # Plus de samples pour split
+        #    'min_samples_leaf': randint(3, 10)      # Plus de samples par feuille
+        #}
 
         # Moins d'itérations et moins de folds
+        #random_search = RandomizedSearchCV(
+        #    estimator=rf_model,
+        #    param_distributions=param_dist,
+        #    n_iter=5,           # Seulement 5 combinaisons testées
+        #    cv=2,               # Seulement 2 folds
+        #    n_jobs=-1,
+        #    verbose=1
+        #)
+        
+        # Entraînement du modèle plus affiné pour la production
+        param_dist = {
+            'n_estimators': randint(100, 500),
+            'max_depth': randint(10, 30),
+            'min_samples_split': randint(2, 10),
+            'min_samples_leaf': randint(1, 5)
+        }
         random_search = RandomizedSearchCV(
             estimator=rf_model,
             param_distributions=param_dist,
-            n_iter=5,           # Seulement 5 combinaisons testées
-            cv=2,               # Seulement 2 folds
+            n_iter=30,
+            cv=5,
             n_jobs=-1,
-            verbose=1
+            verbose=2
         )
+        
+        
         random_search.fit(X_train, y_train)
 
         self.model = random_search.best_estimator_
