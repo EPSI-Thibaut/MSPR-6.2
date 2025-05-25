@@ -15,6 +15,13 @@ export default defineConfig({
   },
   server: {
     proxy: {
+      '/api/train_predict': {
+        target: 'http://localhost:5001',
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path.replace(/^\/api/, '')
+      },
+
       '/api': {
         target: 'http://localhost:8081',
         changeOrigin: true,

@@ -20,7 +20,7 @@ Cette application FLASK PYthon est conçue pour créer un modèle de prédiction
    flask db upgrade
    ```
 
-4. **Lancer l'application Flask** :
+4. **Lancer l'application Flask et la route d'entrainement du modèle IA pour le front VUE** :
    ```bash
    python run.py
    ```
