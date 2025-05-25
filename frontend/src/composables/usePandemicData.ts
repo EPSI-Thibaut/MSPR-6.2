@@ -135,6 +135,30 @@ export function usePandemicData(selectedRegion: unknown = null) {
     }
   }
 
+const predictions = ref<any[]>([]);
+  // Récupérer les données de prédictions sur la route /api/predictions
+const fetchPredictions = async () => {
+  try {
+    loading.value = true;
+    error.value = null;
+    const response = await axios.get('/api/predictions');
+    if (response.status !== 200) {
+      throw new Error(`Erreur HTTP: ${response.status}`);
+    }
+    const data = response.data;
+    if (!data || data.length === 0) {
+      throw new Error('Aucune donnée de prédiction disponible');
+    }
+    predictions.value = data; // Stocke les données ici
+  } catch (err: any) {
+    console.error('Erreur lors du chargement des données de prédiction:', err);
+    error.value = `Erreur lors du chargement des données de prédiction: ${err.message}`;
+    predictions.value = [];
+  } finally {
+    loading.value = false;
+  }
+};
+
   // Construire des objets pandémies à partir des données de comparaison
   const pandemicStats = computed(() => {
     if (!comparisonData.value) return []
@@ -485,6 +509,7 @@ export function usePandemicData(selectedRegion: unknown = null) {
     casesDeathsData,
     mortalityData,
     barOptions,
+    predictions,
     doughnutOptions,
 
     // États et données existants
@@ -503,6 +528,7 @@ export function usePandemicData(selectedRegion: unknown = null) {
     fetchPandemics,
     fetchRegions,
     fetchPandemicData,
+    fetchPredictions,
     fetchTimelineData,
     fetchComparisonData,
     fetchComparisonDataSimple,

@@ -118,21 +118,8 @@ onMounted(async () => {
 
     <!-- Contenu principal avec les graphiques -->
     <div v-else role="region" aria-label="Visualisation des statistiques">
-      <!-- Graphique en camembert -->
-      <StatisticsPieChart
-        :allCountriesData="allCountriesData"
-        :selectedPandemic="selectedPandemic"
-        :loading="loadingPandemicData"
-      />
 
-      <!-- Graphique en barres -->
-      <StatisticsBarChart
-        :countriesData="countriesData"
-        :selectedPandemic="selectedPandemic"
-        :loading="loadingPandemicData"
-      />
-
-      <!-- Graphique timeline -->
+            <!-- Graphique timeline -->
       <StatisticsTimelineChart
         v-if="timelineData.length > 0 || loadingTimelineData"
         :timelineData="timelineData"
@@ -149,6 +136,22 @@ onMounted(async () => {
         :selectedRegion="selectedRegion"
         :loading="loadingComparisonData"
       />
+
+      <!-- Graphique en camembert -->
+      <StatisticsPieChart
+        :allCountriesData="allCountriesData"
+        :selectedPandemic="selectedPandemic"
+        :loading="loadingPandemicData"
+      />
+
+      <!-- Graphique en barres -->
+      <StatisticsBarChart
+        :countriesData="countriesData"
+        :selectedPandemic="selectedPandemic"
+        :loading="loadingPandemicData"
+      />
+
+
     </div>
   </div>
 </template>

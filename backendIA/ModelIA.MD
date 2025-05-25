@@ -2,180 +2,152 @@
 
 ## 1. Introduction
 
-Ce document décrit le workflow et l’architecture du modèle IA utilisé pour prédire l’évolution de la pandémie COVID en 2023.
+Ce document décrit le workflow, l’architecture et l’utilisation du modèle IA `CovidForecaster` pour la prédiction de l’évolution de la pandémie COVID-19 sur l’année 2023.
 
 ---
 
 ## 2. Lancement du workflow
 
-Pour lancer le workflow du modèle IA qui va générer les prédictions des données de COVID en 2023, exécutez :
+### 2.1 Depuis le terminal
+
+Pour lancer le workflow complet (préparation des données, entraînement, prédiction, sauvegarde en base et génération de graphiques) :
 
 ```bash
-python3 workflow.py
+python3 app/workflow.py
 ```
+
+### 2.2 Depuis une API Flask
+
+Une route `/api/train_predict` peut être appelée pour déclencher le workflow à distance (voir le backend Flask).
 
 ---
 
 ## 3. Architecture du modèle
 
-Le modèle utilise un ensemble (ensemble model) basé sur la classe `CovidForecaster` qui implémente les étapes suivantes :
+Le modèle est basé sur la classe `CovidForecaster` (voir `app/ia_model.py`).  
+Le workflow suit les étapes suivantes :
 
 ### 3.1 Récupération des données
 
-- Connexion à la base MariaDB pour extraire les données historiques COVID.
+- Connexion à la base MariaDB via SQLAlchemy.
+- Extraction des données historiques COVID (cas, décès, guérisons, régions, continents).
 
 ### 3.2 Prétraitement des données
 
-- Nettoyage des valeurs extrêmes.
-- Création de caractéristiques temporelles (jour de la semaine, mois, etc.).
-- Génération de variables décalées (lag features) pour capturer les tendances.
-- Calcul de moyennes mobiles.
+- Nettoyage des valeurs extrêmes et infinies (`clean_extreme_values`).
+- Création de variables temporelles (jour, mois, saison, week-end, etc.).
+- Génération de variables décalées (lags) et de moyennes mobiles.
+- Calcul des taux de croissance, mortalité et récupération.
+- Gestion intelligente des valeurs manquantes.
 
 ### 3.3 Entraînement
 
-- Utilisation d’un modèle `RandomForestRegressor`.
-- Optimisation des hyperparamètres via `RandomizedSearchCV`.
-- Division train/test temporelle pour respecter la chronologie des données.
+- Séparation temporelle train/test (`prepare_train_test`).
+- Normalisation des features.
+- Entraînement d’un `RandomForestRegressor` avec optimisation des hyperparamètres via `RandomizedSearchCV`.
+- Possibilité d’utiliser un entraînement rapide pour les tests.
 
 ### 3.4 Prédiction
 
-- Génération de prédictions jour par jour.
-- Extrapolation si nécessaire pour couvrir toute l’année 2023.
-- Calcul des décès et récupérations basé sur les taux historiques.
+- Génération de prédictions jour par jour pour l’année 2023 (`predict_future`).
+- Calcul des décès et guérisons prédits à partir des taux historiques.
+- Extrapolation possible si les données ne couvrent pas toute l’année (`extrapolate_to_2023`).
 
-### 3.5 Visualisation et sauvegarde
+### 3.5 Évaluation et visualisation
 
-- Génération de graphiques comparant données réelles et prédictions.
-- Sauvegarde des modèles entraînés pour réutilisation.
-- Stockage des prédictions dans la base de données.
+- Évaluation du modèle sur l’ensemble de test (MSE, RMSE, MAE, R²).
+- Génération et sauvegarde d’un graphique comparant cas réels, cas prédits et projections futures (`plot_predictions`).
 
----
+### 3.6 Sauvegarde
 
-## 4. Caractéristiques utilisées
-
-Le modèle utilise des caractéristiques avancées pour améliorer les prédictions :
-
-- **Variables temporelles** : jour de semaine, mois, saison, weekends.
-- **Indicateurs décalés** : cas, décès et récupérations avec différents délais.
-- **Moyennes mobiles** : sur 7, 14 et 30 jours pour lisser les tendances.
-- **Taux calculés** : taux de croissance, taux de mortalité, taux de récupération.
+- Sauvegarde des prédictions dans la base de données (`save_predictions_to_db`).
+- Sauvegarde du modèle et des scalers pour réutilisation ultérieure (`save_model`/`load_model`).
 
 ---
 
-## 5. Gestion des erreurs
+## 4. Caractéristiques utilisées (features)
 
-Le modèle intègre plusieurs mécanismes de gestion d’erreurs :
+Le modèle utilise les variables suivantes :
 
-- Détection et correction des valeurs infinies ou NaN.
-- Retry automatique avec sous-ensemble de données en cas d’erreur.
-- Mode "test" pour déploiement et vérification rapides.
-
----
-
-## 6. Utilisation du modèle
-
-### 6.1 Lancement du workflow complet
-
-Pour générer des prédictions pour 2023, la commande précédente va :
-
-- Récupérer les données COVID depuis la base de données.
-- Prétraiter les données.
-- Entraîner le modèle.
-- Générer des prédictions pour 2023.
-- Sauvegarder les prédictions dans la base de données.
-- Générer des graphiques de visualisation.
-
-### 6.2 Prédictions par région
-
-Pour générer des prédictions pour une région spécifique, utilisez l’option correspondante dans le script.
-
-### 6.3 Visualisation des résultats
-
-Les graphiques sont automatiquement générés dans le dossier `static/` :
-
-- `covid_predictions.png` : comparaison entre cas réels, prédits et prévisions futures.
+- **Variables temporelles** : `day_of_week`, `month`, `season`, `is_weekend`, `quarter`
+- **Variables décalées** : `cases_lag1`, `cases_lag7`, `cases_lag14`, `deaths_lag1`, `deaths_lag7`, `recovered_lag1`
+- **Moyennes mobiles** : `cases_ma7`, `cases_ma30`
+- **Taux** : `growth_rate`, `death_rate`, `recovery_rate`
 
 ---
 
-## 7. Maintenance et améliorations possibles
+## 5. Utilisation des scripts
 
-### Performances
+### 5.1 Lancement du workflow complet
 
-- Ajuster les paramètres d’entraînement pour améliorer les temps de traitement.
-- Utiliser `use_bulk_insert=True` dans `save_predictions_to_db` pour des insertions plus rapides.
+- Exécute `python3 app/workflow.py` pour lancer tout le processus.
+- Les prédictions sont sauvegardées en base et un graphique est généré dans `static/covid_predictions.png`.
 
-### Précision du modèle
+### 5.2 Test rapide
 
-- Ajouter d’autres sources de données (vaccinations, mesures gouvernementales).
-- Essayer des architectures de modèles alternatives (LSTM, XGBoost).
-- Intégrer des données démographiques par région.
+- Utilise `app/test_ia_model.py` pour un test minimal sur un petit échantillon (100 lignes).
 
-### Visualisation
+### 5.3 API Flask
 
-- Développer un tableau de bord interactif pour explorer les prédictions.
-- Ajouter des intervalles de confiance aux prédictions.
+- Une route POST `/api/train_predict` permet de lancer le workflow à distance (voir backend Flask).
 
 ---
 
-## 8. Résolution des problèmes courants
+## 6. Maintenance et amélioration
 
-### Erreur "cannot convert float NaN to integer"
-
-- Vérifiez que les données source ne contiennent pas de valeurs NaN.
-- Le modèle inclut désormais une protection contre les NaN.
-
-### Problèmes de connexion à la base de données
-
-- Vérifiez les paramètres dans le fichier `.env`.
-- Assurez-vous que la base de données est accessible.
-
-### Erreurs d’entraînement du modèle
-
-- Utiliser l’option `test_mode=True` pour un entraînement plus simple.
-- Réduire la taille des données avec `df.tail(1000)` pour les tests.
+- **Performance** : ajuste les paramètres d’entraînement pour accélérer ou affiner le modèle.
+- **Précision** : ajoute d’autres sources de données (vaccinations, mesures, démographie), teste d’autres modèles (`GradientBoostingRegressor`, `XGBoost`…).
+- **Visualisation** : développe un tableau de bord interactif pour explorer les prédictions.
 
 ---
 
-## 9. Définition de la classe et des méthodes
+## 7. Résolution des problèmes courants
 
-### `__init__()`
-Initialise le modèle de prévision COVID avec les composants essentiels : scalers pour la normalisation des données, connexion à la base de données et définition des caractéristiques de base pour l’apprentissage.
+- **Erreur "cannot convert float NaN to integer"** : vérifie l’absence de NaN dans les données sources.
+- **Problèmes de connexion à la base** : vérifie le fichier `.env` et l’accessibilité de la base.
+- **Erreur d’entraînement** : utilise un sous-échantillon (`df.tail(1000)`) ou le mode rapide pour le debug.
 
-### `fetch_data(region_id=None)`
-Récupère les données COVID depuis la base de données. Filtre par région si un identifiant est fourni. Retourne un DataFrame contenant les cas, décès, guérisons et informations géographiques.
+---
 
-### `clean_extreme_values(df)`
-Nettoie les valeurs aberrantes ou infinies dans les données. Remplace les valeurs extrêmes par des seuils raisonnables (99e percentile) et les valeurs manquantes par la médiane de chaque colonne.
+## 8. Description des principales méthodes
 
-### `preprocess_data(df)`
-Prépare les données brutes pour l’apprentissage automatique. Crée des caractéristiques temporelles (jour de semaine, mois, saison), calcule des taux (croissance, mortalité), génère des variables décalées et des moyennes mobiles pour capturer les tendances.
+- **`__init__()`** : initialise le modèle, les scalers et la connexion à la base.
+- **`fetch_data(region_id=None)`** : récupère les données COVID depuis la base.
+- **`clean_extreme_values(df)`** : nettoie les valeurs aberrantes.
+- **`preprocess_data(df)`** : prépare les données pour l’apprentissage.
+- **`prepare_train_test(df, test_size=0.2)`** : split temporel, normalisation.
+- **`train(X_train, y_train)`** : entraînement du modèle avec recherche d’hyperparamètres.
+- **`evaluate(X_test, y_test)`** : évaluation du modèle.
+- **`predict_future(df, days=30)`** : prédiction itérative sur la période future.
+- **`extrapolate_to_2023(df)`** : extrapolation si besoin jusqu’à fin 2023.
+- **`predict_2023_safe(region_name=None, retry_with_subset=True)`** : workflow robuste avec fallback.
+- **`save_model(path)` / `load_model(path)`** : sauvegarde/chargement du modèle.
+- **`plot_predictions(y_test, y_pred, test_dates, future_df=None)`** : graphique de comparaison.
+- **`predict_2023(region_name=None)`** : workflow principal pour générer et sauvegarder les prédictions 2023.
 
-### `prepare_train_test(df, test_size=0.2)`
-Divise chronologiquement les données en ensembles d’entraînement et de test. Normalise les données et vérifie leur intégrité. Conserve l’ordre temporel des données pour respecter la nature séquentielle des séries temporelles.
+---
 
-### `train(X_train, y_train)`
-Entraîne un modèle RandomForest avec optimisation des hyperparamètres via RandomizedSearchCV. Recherche la meilleure configuration parmi différentes combinaisons de paramètres (nombre d’arbres, profondeur, etc.).
+## 9. Exemple d’utilisation
 
-### `evaluate(X_test, y_test)`
-Évalue les performances du modèle sur les données de test en calculant des métriques standard : MSE, RMSE, MAE et R². Affiche les résultats et retourne les prédictions pour comparaison.
+```python
+from app.ia_model import CovidForecaster
 
-### `predict_future(df, days=30)`
-Génère des prédictions jour par jour pour une période future spécifiée. Utilise une approche itérative où chaque prédiction devient une entrée pour les prédictions suivantes, simulant ainsi la progression temporelle des cas COVID.
+forecaster = CovidForecaster()
+predictions = forecaster.predict_2023(region_name="Europe")
+print(predictions.head())
+```
 
-### `extrapolate_to_2023(df)`
-Étend les données historiques jusqu’à fin 2023 en utilisant un modèle de croissance contrôlé. Calcule les nouveaux cas, décès et guérisons en fonction des tendances récentes, avec des limites pour éviter les valeurs irréalistes.
+---
 
-### `predict_2023_safe(region_name=None, retry_with_subset=True)`
-Version robuste de `predict_2023` avec mécanisme de repli automatique. En cas d’erreur (valeurs infinies), réessaie avec un sous-ensemble réduit de données pour garantir la génération de prédictions.
+## 10. Fichiers principaux
 
-### `save_model(path='model')`
-Sauvegarde le modèle entraîné, les scalers et la liste des caractéristiques dans un dossier spécifié. Permet de réutiliser ultérieurement le modèle sans réentraînement.
+- `app/ia_model.py` : classe et logique du modèle IA
+- `app/services.py` : fonctions d’accès et de sauvegarde en base
+- `app/workflow.py` : script de workflow complet
+- `app/test_ia_model.py` : test rapide du modèle
 
-### `load_model(path='model')`
-Charge un modèle préalablement entraîné depuis un dossier spécifié. Restaure le modèle, les scalers et la liste des caractéristiques pour continuer les prédictions.
+---
 
-### `plot_predictions(y_test, y_pred, test_dates, future_df=None)`
-Génère et sauvegarde un graphique comparant les cas réels, les prédictions sur les données de test et les prédictions futures. Permet de visualiser la performance du modèle et ses projections.
+## 11. Contact
 
-### `predict_2023(region_name=None)`
-Fonction principale pour générer des prédictions COVID pour l’année 2023. Récupère les données, les prétraite, entraîne le modèle, évalue sa performance et génère les prédictions pour toute l’année. Sauvegarde les résultats dans la base de données et génère des visualisations.
+Pour toute question ou amélioration, contacter l’équipe projet.

@@ -1,84 +1,232 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
-
+import { ref, watchEffect } from 'vue';
 import Chart from 'primevue/chart';
+import Button from 'primevue/button';
+import ProgressSpinner from 'primevue/progressspinner';
+import { usePandemicData } from '@/composables/usePandemicData';
+import axios from 'axios';
 
-onMounted(() => {
-  chartData.value = setChartData();
-  chartOptions.value = setChartOptions();
+const {
+  predictions,
+  fetchPredictions,
+  loading,
+  error,
+} = usePandemicData();
+
+const chartData = ref<any>(null);
+const chartOptions = ref<any>(null);
+
+// Points clés séparés
+const keyCasesData = ref<any>(null);
+const keyCasesOptions = ref<any>(null);
+const keyDeathsData = ref<any>(null);
+const keyDeathsOptions = ref<any>(null);
+const keyRecoveredData = ref<any>(null);
+const keyRecoveredOptions = ref<any>(null);
+
+const training = ref(false);
+const trainingMessage = ref('');
+
+async function launchTraining() {
+  training.value = true;
+  trainingMessage.value = '';
+  try {
+    const res = await axios.post('/api/train_predict');
+    trainingMessage.value = res.data.message || 'Entraînement terminé.';
+    await fetchPredictions();
+  } catch (err: any) {
+    trainingMessage.value = err.response?.data?.message || 'Erreur lors de l’entraînement du modèle IA.';
+  } finally {
+    training.value = false;
+  }
+}
+
+watchEffect(() => {
+  if (predictions.value && predictions.value.length > 0) {
+    const sorted = [...predictions.value].sort((a, b) => new Date(a.predictionDate).getTime() - new Date(b.predictionDate).getTime());
+    const labels = sorted.map((item: any) => item.predictionDate);
+    const cases = sorted.map((item: any) => item.predictedCases ?? null);
+    const deaths = sorted.map((item: any) => item.predictedDeaths ?? null);
+    const recovered = sorted.map((item: any) => item.predictedRecovered ?? null);
+
+    chartData.value = {
+      labels,
+      datasets: [
+        {
+          label: 'Cas prédits',
+          data: cases,
+          borderColor: '#42A5F5',
+          backgroundColor: 'rgba(66,165,245,0.2)',
+          tension: 0.3,
+          fill: false,
+        },
+        {
+          label: 'Décès prédits',
+          data: deaths,
+          borderColor: '#E53935',
+          backgroundColor: 'rgba(229,57,53,0.2)',
+          tension: 0.3,
+          fill: false,
+        },
+        {
+          label: 'Guérisons prédites',
+          data: recovered,
+          borderColor: '#43A047',
+          backgroundColor: 'rgba(67,160,71,0.2)',
+          tension: 0.3,
+          fill: false,
+        },
+      ],
+    };
+    chartOptions.value = {
+      responsive: true,
+      plugins: {
+        legend: {
+          display: true,
+          labels: {
+            color: '#222',
+            font: { size: 14 }
+          }
+        },
+        title: {
+          display: true,
+          text: 'Prédictions COVID 2023 (Cas, Décès, Guérisons)',
+          font: { size: 18 }
+        },
+        tooltip: {
+          mode: 'index',
+          intersect: false,
+        },
+      },
+      interaction: {
+        mode: 'nearest',
+        axis: 'x',
+        intersect: false
+      },
+      scales: {
+        x: {
+          title: {
+            display: true,
+            text: 'Date',
+            color: '#222',
+            font: { size: 14 }
+          },
+          ticks: {
+            color: '#222',
+            maxTicksLimit: 12,
+            autoSkip: true
+          }
+        },
+        y: {
+          title: {
+            display: true,
+            text: 'Nombre',
+            color: '#222',
+            font: { size: 14 }
+          },
+          ticks: {
+            color: '#222',
+            callback: (value: number) => value.toLocaleString('fr-FR')
+          }
+        }
+      }
+    };
+
+    // Points clés séparés
+    const maxCases = Math.max(...cases);
+    const minCases = Math.min(...cases);
+    const maxDeaths = Math.max(...deaths);
+    const minDeaths = Math.min(...deaths);
+    const maxRecovered = Math.max(...recovered);
+    const minRecovered = Math.min(...recovered);
+
+    keyCasesData.value = {
+      labels: ['Cas max', 'Cas min'],
+      datasets: [
+        {
+          label: 'Cas 2023',
+          backgroundColor: ['#42A5F5', '#90CAF9'],
+          data: [maxCases, minCases]
+        }
+      ]
+    };
+    keyCasesOptions.value = {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        title: { display: true, text: 'Points clés - Cas', font: { size: 16 } }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: {
+            color: '#222',
+            callback: (value: number) => value.toLocaleString('fr-FR')
+          }
+        },
+        x: { ticks: { color: '#222' } }
+      }
+    };
+
+    keyDeathsData.value = {
+      labels: ['Décès max', 'Décès min'],
+      datasets: [
+        {
+          label: 'Décès 2023',
+          backgroundColor: ['#E53935', '#FFCDD2'],
+          data: [maxDeaths, minDeaths]
+        }
+      ]
+    };
+    keyDeathsOptions.value = {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        title: { display: true, text: 'Points clés - Décès', font: { size: 16 } }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: {
+            color: '#222',
+            callback: (value: number) => value.toLocaleString('fr-FR')
+          }
+        },
+        x: { ticks: { color: '#222' } }
+      }
+    };
+
+    keyRecoveredData.value = {
+      labels: ['Guérisons max', 'Guérisons min'],
+      datasets: [
+        {
+          label: 'Guérisons 2023',
+          backgroundColor: ['#43A047', '#A5D6A7'],
+          data: [maxRecovered, minRecovered]
+        }
+      ]
+    };
+    keyRecoveredOptions.value = {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        title: { display: true, text: 'Points clés - Guérisons', font: { size: 16 } }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: {
+            color: '#222',
+            callback: (value: number) => value.toLocaleString('fr-FR')
+          }
+        },
+        x: { ticks: { color: '#222' } }
+      }
+    };
+  }
 });
 
-const chartData = ref();
-const chartOptions = ref();
-
-const setChartData = () => {
-  const documentStyle = getComputedStyle(document.documentElement);
-
-  return {
-    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-    datasets: [
-      {
-        label: 'First Dataset',
-        data: [65, 59, 80, 81, 56, 55, 40],
-        fill: false,
-        tension: 0.4,
-        borderColor: documentStyle.getPropertyValue('--p-cyan-500')
-      },
-      {
-        label: 'Second Dataset',
-        data: [28, 48, 40, 19, 86, 27, 90],
-        fill: false,
-        borderDash: [5, 5],
-        tension: 0.4,
-        borderColor: documentStyle.getPropertyValue('--p-orange-500')
-      },
-      {
-        label: 'Third Dataset',
-        data: [12, 51, 62, 33, 21, 62, 45],
-        fill: true,
-        borderColor: documentStyle.getPropertyValue('--p-gray-500'),
-        tension: 0.4,
-        backgroundColor: 'rgba(107, 114, 128, 0.2)'
-      }
-    ]
-  };
-};
-const setChartOptions = () => {
-  const documentStyle = getComputedStyle(document.documentElement);
-  const textColor = documentStyle.getPropertyValue('--p-text-color');
-  const textColorSecondary = documentStyle.getPropertyValue('--p-text-muted-color');
-  const surfaceBorder = documentStyle.getPropertyValue('--p-content-border-color');
-
-  return {
-    maintainAspectRatio: false,
-    aspectRatio: 0.6,
-    plugins: {
-      legend: {
-        labels: {
-          color: textColor
-        }
-      }
-    },
-    scales: {
-      x: {
-        ticks: {
-          color: textColorSecondary
-        },
-        grid: {
-          color: surfaceBorder
-        }
-      },
-      y: {
-        ticks: {
-          color: textColorSecondary
-        },
-        grid: {
-          color: surfaceBorder
-        }
-      }
-    }
-  };
-}
+fetchPredictions();
 </script>
 
 
@@ -86,16 +234,9 @@ const setChartOptions = () => {
 
 
 <template>
-
-
-  <div>
-    <h1>Prédictions COVID</h1>
-  </div>
-  
-
-  <div class="card">
-    <Chart type="line" :data="chartData" :options="chartOptions" class="h-[30rem]" />
-  </div>
+<div>
+  <h1>Prédictions COVID</h1>
+</div>
 </template>
 
 
