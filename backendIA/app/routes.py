@@ -171,7 +171,7 @@ def train_and_predict():
         
         return jsonify({
             "status": "success",
-            "message": "Workflow d'entraînement démarré en arrière-plan. Utilisez /training_status pour suivre le progrès."
+            "message": "Workflow d'entraînement démarré en arrière-plan."
         }), 200
         
     except Exception as e:
