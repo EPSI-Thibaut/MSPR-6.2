@@ -234,9 +234,66 @@ fetchPredictions();
 
 
 <template>
-<div>
-  <h1>Prédictions COVID</h1>
-</div>
+  <div class="flex flex-column align-items-center">
+    <h1>Prédictions COVID</h1>
+
+    <Button
+      label="Entraînement du modèle IA de prédiction 2023"
+      icon="pi pi-cog"
+      class="p-mb-3"
+      @click="launchTraining"
+      :disabled="training"
+    />
+
+    <div v-if="training" class="p-mt-3" style="display: flex; align-items: center;">
+      <ProgressSpinner style="width: 40px; height: 40px" strokeWidth="4" />
+      <span class="p-ml-3">Entraînement du modèle IA en cours...</span>
+    </div>
+    <div v-if="trainingMessage" class="p-mt-2">{{ trainingMessage }}</div>
+
+    <div v-if="loading" class="p-mt-4">Chargement des données...</div>
+    <div v-else>
+      <div v-if="error" class="p-mt-4" style="color: red;">{{ error }}</div>
+      <template v-if="chartData">
+        <Chart type="line" :data="chartData" :options="chartOptions" style="min-height:500px; height:500px;" />
+        <div style="display: flex; flex-wrap: wrap; gap: 32px; justify-content: center; margin-top: 40px;">
+          <Chart v-if="keyCasesData" type="bar" :data="keyCasesData" :options="keyCasesOptions" style="max-width:300px;" />
+          <Chart v-if="keyDeathsData" type="bar" :data="keyDeathsData" :options="keyDeathsOptions" style="max-width:300px;" />
+          <Chart v-if="keyRecoveredData" type="bar" :data="keyRecoveredData" :options="keyRecoveredOptions" style="max-width:300px;" />
+        </div>
+        <div class="mt-8 w-full max-w-md bg-white rounded-lg shadow p-6">
+          <h2 class="text-xl font-semibold mb-4 text-center">Points clés</h2>
+          <ul class="space-y-2">
+            <li class="flex justify-between border-b pb-1">
+              <span>Cas max :</span>
+              <span class="font-bold text-blue-600">{{ keyCasesData.datasets[0].data[0].toLocaleString('fr-FR') }}</span>
+            </li>
+            <li class="flex justify-between border-b pb-1">
+              <span>Cas min :</span>
+              <span class="font-bold text-blue-400">{{ keyCasesData.datasets[0].data[1].toLocaleString('fr-FR') }}</span>
+            </li>
+            <li class="flex justify-between border-b pb-1">
+              <span>Décès max :</span>
+              <span class="font-bold text-red-600">{{ keyDeathsData.datasets[0].data[0].toLocaleString('fr-FR') }}</span>
+            </li>
+            <li class="flex justify-between border-b pb-1">
+              <span>Décès min :</span>
+              <span class="font-bold text-red-400">{{ keyDeathsData.datasets[0].data[1].toLocaleString('fr-FR') }}</span>
+            </li>
+            <li class="flex justify-between border-b pb-1">
+              <span>Guérisons max :</span>
+              <span class="font-bold text-green-600">{{ keyRecoveredData.datasets[0].data[0].toLocaleString('fr-FR') }}</span>
+            </li>
+            <li class="flex justify-between">
+              <span>Guérisons min :</span>
+              <span class="font-bold text-green-400">{{ keyRecoveredData.datasets[0].data[1].toLocaleString('fr-FR') }}</span>
+            </li>
+          </ul>
+        </div>
+      </template>
+      <div v-else class="p-mt-4">Aucune donnée de prédiction disponible.</div>
+    </div>
+  </div>
 </template>
 
 
