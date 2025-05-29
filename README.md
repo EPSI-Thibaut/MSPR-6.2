@@ -7,6 +7,10 @@ Session 2024-2025
 
 ## Projet MSPR 6.2 : Développement d'une API IA Prédictive pour l'OMS
 
+## Vous trouverez une documentation README.MD dans chaques dossiers du projet (frontend, backend et backendIA) pour l'installation.
+
+## Vous trouverez une documentation détaillée du modèle IA dans le dossier backendIa : https://github.com/EPSI-Thibaut/MSPR-6.2/blob/main/backendIA/ModelIA.MD
+
 ### Contexte
 
 Ce projet s'inscrit dans le cadre de la certification **"Développeur en Intelligence Artificielle et Data Science" (RNCP 36581)**.  
