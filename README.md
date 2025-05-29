@@ -1,5 +1,10 @@
 # MSPR-6.2
 
+Mika LY, Jused ADINSI, Alexia NICOLEAU, Martin KHYARI, Thibaut MOSTEAU
+
+EPSI NANTES
+Session 2024-2025
+
 ## Projet MSPR 6.2 : Développement d'une API IA Prédictive pour l'OMS
 
 ### Contexte
